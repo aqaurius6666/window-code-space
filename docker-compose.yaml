@@ -1,0 +1,13 @@
+version: "3.7"
+networks:
+  window-code-space:
+    name: window-code-space
+services:
+  nginx:
+    image: nginx
+    volumes:
+      - "./html:/usr/share/nginx/html"
+    ports:
+      - "80:80"
+    networks:
+      - window-code-space

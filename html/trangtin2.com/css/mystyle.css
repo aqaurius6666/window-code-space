@@ -31,3 +31,35 @@
     display: inline;
     margin-left: 1%;
 }
+#left-bar {
+	float: left;
+	width: 15%
+}
+#left-bar > a {
+	display: block;
+	height: 50px;
+	text-align: center;
+	margin-top: 10px;
+	border: solid 1px blue;
+}
+#left-bar > img {
+	display: block;
+	height: 50px;
+	text-align: center;
+	border: solid 1px blue;
+	margin-top: 10px;
+	width: 100%;
+
+}
+#center-content {
+	float: left;
+	width: 68%;
+	margin-left: 10px;
+}
+#right-bar {
+	float: right;
+	width: 15%;
+}
+#footer {
+	display: block;
+}

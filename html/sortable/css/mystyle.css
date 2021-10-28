@@ -1,0 +1,12 @@
+
+th.sortcol::after {
+    content: "\2195";
+}
+
+th.sortcol.asc::after {
+    content: "\2193";
+}
+
+th.sortcol.desc::after {
+    content: "\2191";
+}

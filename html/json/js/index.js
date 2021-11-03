@@ -23,7 +23,6 @@ const onFetchButtonClick = (e) => {
 
 
 const createRow = ({ index, name, age, cars }) => {
-    console.log(cars)
     const table = document.getElementById("table");
     const contentTable = table.childNodes[1]; // tbody
     const nameCol = document.createElement("th");
@@ -49,9 +48,31 @@ const createRow = ({ index, name, age, cars }) => {
 };
 
 const onSortColClick = (e, indexCol) => {
+    removeArrow()
+    if (indexCol === currentSortCol) {
+        isASC = !isASC
+    } else {
+        isASC = true
+    }
     currentSortCol = indexCol
-    isASC = true
+    const elements = document.getElementsByClassName("sortcol")
+    if (isASC) {
+        elements[currentSortCol].className = "sortcol asc"
+    } else {
+        elements[currentSortCol].className = "sortcol desc"
+    }
     sortTable()
+}
+
+const removeArrow = () => {
+    let elements = document.getElementsByClassName("asc")
+    for (i=0; i<elements.length; i++) {
+        elements[i].className = "sortcol"
+    }
+    elements = document.getElementsByClassName("desc")
+    for (i=0; i<elements.length; i++) {
+        elements[i].className = "sortcol"
+    }
 }
 
 
@@ -59,18 +80,16 @@ const sortTable = () => {
     const table = document.getElementById("table");
     const contentTable = table.childNodes[1]; // tbody
     const childNodes = contentTable.childNodes
-    console.log(childNodes.length)
-    console.log(childNodes)
     for (i=2; i<childNodes.length-1; i++) {
-        for (j=3; j<childNodes.length;j++) {
-            if (childNodes[i].childNodes[currentSortCol].innerText < childNodes[j].childNodes[currentSortCol].innerText ^ isASC) {
-                // in right position
-                console.log("er")
-            } else {
-                console.log("123")
-                temp = childNodes[i]
-                childNodes[i] = childNodes[j]
-                childNodes[j] = temp               
+        for (j=i+1; j<childNodes.length;j++) {
+            compareStmt = childNodes[i].childNodes[currentSortCol].innerText < childNodes[j].childNodes[currentSortCol].innerText && isASC
+            if (!compareStmt) {
+                numCol = childNodes[i].childNodes.length
+                for (k=0; k<numCol; k++) {
+                    temp = childNodes[i].childNodes[k].innerText
+                    childNodes[i].childNodes[k].innerText = childNodes[j].childNodes[k].innerText
+                    childNodes[j].childNodes[k].innerText = temp          
+                }
             }
         }
     }

@@ -11,5 +11,6 @@
             "type": "pwa-chrome",
             "webRoot": "${workspaceFolder}"
         },
+  
     ]
 }

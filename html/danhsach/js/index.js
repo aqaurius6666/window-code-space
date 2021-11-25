@@ -1,33 +1,63 @@
 const initData = () => [
     {
+        id: "1",
         name: "A",
+        dob: "19/8/2001",
+        gender: "Nam",
+    },
+    {
+        id: "2",
+        name: "D",
+        dob: "19/8/2003",
+        gender: "Nu",
+    },
+    {
+        id: "3",
+        name: "C",
         dob: "19/8/2002",
         gender: "Nam",
     },
     {
-        name: "A",
-        dob: "19/8/2002",
-        gender: "Nam",
+        id: "4",
+        name: "B",
+        dob: "19/8/2004",
+        gender: "Nu",
     },
     {
-        name: "A",
-        dob: "19/8/2002",
-        gender: "Nam",
+        id: "5",
+        name: "K",
+        dob: "20/8/2004",
+        gender: "Nu",
     },
     {
-        name: "A",
-        dob: "19/8/2002",
-        gender: "Nam",
+        id: "6",
+        name: "CB",
+        dob: "19/10/2004",
+        gender: "Nu",
     },
-];
+    {
+        id: "7",
+        name: "DB",
+        dob: "11/8/2004",
+        gender: "Nu",
+    },
+    {
+        id: "8",
+        name: "BE",
+        dob: "2/2/2004",
+        gender: "Nu",
+    },
 
-const createRow = ({ index, name, dob, gender }) => {
+];
+let current_data = [];
+const createRow = ({ index, name, dob, gender, id }) => {
     const table = document.getElementById("table");
     const contentTable = table.childNodes[1]; // tbody
-    console.log(contentTable);
     const checkboxCol = document.createElement("th");
     const checkboxNode = document.createElement("input");
     checkboxNode.setAttribute("type", "checkbox");
+    checkboxNode.className = "checkbox";
+    checkboxNode.id = id;
     checkboxNode.setAttribute("onclick", "onCheckBoxTick(this)");
     checkboxCol.appendChild(checkboxNode);
     const nameCol = document.createElement("th");
@@ -37,6 +67,7 @@ const createRow = ({ index, name, dob, gender }) => {
     const genderCol = document.createElement("th");
     genderCol.innerText = gender;
     const rowNode = document.createElement("tr");
+    rowNode.className = "row"
     if (index % 2 == 0) {
         rowNode.style.setProperty("color", "red");
     } else {
@@ -48,11 +79,21 @@ const createRow = ({ index, name, dob, gender }) => {
     rowNode.appendChild(genderCol);
     contentTable.appendChild(rowNode);
 };
-const refreshData = () => {
-    data.forEach((e, index) => createRow({ index, ...e }));
+const refreshData = (_data) => {
+    current_data = _data
+    const table = document.getElementById("table");
+    const contentTable = table.childNodes[1]; // tbody
+    const childNodes = contentTable.childNodes
+    if (childNodes.length > 2) {
+        for (i=childNodes.length-1; i>=2; i--) {
+            contentTable.removeChild(childNodes[i])
+        }
+    }
+    current_data.forEach((e, index) => createRow({ index, ...e }));
+    
 };
-const data = initData();
-refreshData();
+
+refreshData(initData());
 
 const onCheckBoxTick = (e) => {
     const rowNode = e.parentNode.parentNode;
@@ -61,54 +102,54 @@ const onCheckBoxTick = (e) => {
     } else {
         rowNode.style.setProperty("background-color", "");
     }
-    shouldAllButtonChecked();
-    shouldDeleteButtonShow();
+    refreshAllCheckBoxNode();
+    refreshDeleteButton();
 };
-const shouldDeleteButtonShow = () => {
-    const { count } = countChecked();
-    if (count > 0) {
-        document.getElementById("delete-button").style.setProperty("opacity", "100%");
+const refreshDeleteButton = () => {
+    const { checkedNodes } = getCheckBoxNodes();
+    if (checkedNodes.length > 0) {
+        document.getElementById("delete-button").style.setProperty("visibility", "visible");
     } else {
-        document.getElementById("delete-button").style.setProperty("opacity", "0%");
+        document.getElementById("delete-button").style.setProperty("visibility", "hidden");
     }
 };
-const countChecked = () => {
-    const table = document.getElementById("table");
-    const contentTable = table.childNodes[1]; // tbody
-    const childNodes = contentTable.childNodes;
-    let count = 0;
-    for (i = 2; i < childNodes.length; i++) {
-        // checkbox node is first child of row node
-        const checkBoxNode = childNodes[i].firstChild.firstChild;
-        if (checkBoxNode.checked === true) {
-            count++;
+const getCheckBoxNodes = () => {
+    const checkboxNodes = document.getElementsByClassName("checkbox");
+    const checkedNodes = [];
+    const allNodes = [];
+    for (i = 0; i < checkboxNodes.length; i++) {
+        if (checkboxNodes.item(i).checked) {
+            checkedNodes.push(checkboxNodes.item(i));
         }
+        allNodes.push(checkboxNodes.item(i));
     }
     return {
-        count,
-        total: childNodes - 2,
+        checkedNodes,
+        allNodes,
     };
 };
-const shouldAllButtonChecked = (rowNode) => {
-    const { count, total } = countChecked();
-    const allButton = document.getElementById("check-all");
-    if (count === total) {
-        allButton.checked = true;
+const refreshAllCheckBoxNode = () => {
+    const { checkedNodes, allNodes } = getCheckBoxNodes();
+    const allCheckBoxNode = document.getElementById("check-all");
+    console.log(allNodes.length)
+    if (checkedNodes.length === allNodes.length && checkedNodes.length !== 0) {
+        allCheckBoxNode.checked = true;
     } else {
-        allButton.checked = false;
+        allCheckBoxNode.checked = false;
     }
 };
 const onDeleteButtonClick = (e) => {
-    const table = document.getElementById("table");
-    const contentTable = table.childNodes[1]; // tbody
-    const childNodes = contentTable.childNodes;
-    for (i = 2; i < childNodes.length; i++) {
-        // checkbox node is first child of row node
-        const checkBoxNode = childNodes[i].firstChild.firstChild;
-        if (checkBoxNode.checked === true) {
+    const { checkedNodes } = getCheckBoxNodes();
+    const copydata = [];
+    const ids = checkedNodes.map((e) => e.id);
+    current_data.forEach((e) => {
+        if (ids.indexOf(e.id) == -1) {
+            copydata.push(e)
         }
-    }
-    console.log(e);
+    })
+    refreshData(copydata);
+    refreshDeleteButton()
+    refreshAllCheckBoxNode()
 };
 
 const onAllCheckBoxClick = (e) => {
@@ -126,10 +167,9 @@ const onAllCheckBoxClick = (e) => {
         }
         shouldHightLightRow(checkBoxNode.parentNode.parentNode);
     }
-    shouldDeleteButtonShow();
+    refreshDeleteButton();
+    refreshAllCheckBoxNode()
 };
-
-const refreshDeleteButton = () => {};
 
 const shouldHightLightRow = (rowNode) => {
     if (rowNode.firstChild.firstChild.checked === true) {
